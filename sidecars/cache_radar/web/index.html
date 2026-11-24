@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="Content-Security-Policy" content="frame-src 'none'; child-src 'none'">
+  <title>Cache Radar</title>
+  <script src="/preload.js"></script>
+  <link rel="stylesheet" href="/styles.css?v=9">
+</head>
+<body>
+  <div class="widget" id="widget">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-dot" id="live-dot" aria-hidden="true"></span>
+        <h1 class="brand-title">Cache Radar</h1>
+      </div>
+      <div class="topbar-actions">
+        <select id="source-select" class="select-compact" aria-label="数据源范围" title="切换客户端 / Profile 数据源">
+          <option value="all">全部客户端</option>
+        </select>
+        <button id="refresh-btn" type="button" class="icon-btn" title="立即刷新" aria-label="刷新数据">
+          <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
+            <path d="M13.5 8a5.5 5.5 0 1 1-1.4-3.65"/>
+            <path d="M13.5 2.75v2.6h-2.6"/>
+          </svg>
+        </button>
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="缓存命中率视图">
+      <button type="button" role="tab" class="tab active" data-tab="session" aria-selected="true">
+        <span class="tab-label">当前会话</span>
+        <span class="tab-rate" id="tab-rate-session">--</span>
+      </button>
+      <button type="button" role="tab" class="tab" data-tab="24h" aria-selected="false">
+        <span class="tab-label">近 24 小时</span>
+        <span class="tab-rate" id="tab-rate-24h">--</span>
+      </button>
+      <button type="button" role="tab" class="tab" data-tab="30d" aria-selected="false">
+        <span class="tab-label">近 30 天</span>
+        <span class="tab-rate" id="tab-rate-30d">--</span>
+      </button>
+    </nav>
+
+    <main class="content" id="content">
+      <div class="loading-box" id="loading-box">正在加载缓存命中率数据…</div>
+
+      <section id="panel-session" class="panel active" role="tabpanel"></section>
+      <section id="panel-24h" class="panel" role="tabpanel"></section>
+      <section id="panel-30d" class="panel" role="tabpanel"></section>
+    </main>
+
+    <footer class="footer" id="footer">
+      <span id="footer-meta">初始化中…</span>
+      <span id="footer-updated">--</span>
+    </footer>
+  </div>
+
+  <script src="/format.js?v=9"></script>
+  <script src="/charts.js?v=9"></script>
+  <script src="/timeline.js?v=9"></script>
+  <script src="/timeline_drag.js?v=9"></script>
+  <script src="/diag_views.js?v=9"></script>
+  <script src="/views.js?v=9"></script>
+  <script src="/app.js?v=9"></script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+{
+  "$schema": "https://antigravity.google/schemas/v1/plugin.json",
+  "name": "cache-radar",
+  "displayName": "Cache Radar",
+  "version": "0.1.0",
+  "description": "Inspect prompt cache hit rates for the active session (including subagent and swarm trees), last 24 hours, and last 30 days across all local clients.",
+  "logo": "assets/logo.svg",
+  "suggestedPrompts": [
+    "Show the prompt cache hit rate for this active session and its subagents",
+    "Compare prompt cache efficiency over the last 24 hours and 30 days",
+    "Open the Cache Radar widget in the side panel"
+  ],
+  "author": {
+    "name": "meomeo-dev"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cache",
+    "tokens",
+    "diagnostics",
+    "metrics",
+    "swarm",
+    "subagents"
+  ]
+}

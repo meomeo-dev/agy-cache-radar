@@ -1,0 +1,22 @@
+{
+  "name": "agy-cache-radar",
+  "version": "0.1.0",
+  "type": "module",
+  "private": true,
+  "description": "Antigravity plugin widget displaying prompt cache hit rates for the active session, last 24 hours, and last 30 days with subagent/swarm and multi-client support.",
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "scripts": {
+    "test": "node --test tests/*.test.mjs",
+    "dev": "node sidecars/cache_radar/main.mjs --port 4318",
+    "stats": "node scripts/cache-stats.mjs",
+    "validate": "agy plugin validate ."
+  },
+  "author": "meomeo-dev",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/meomeo-dev/agy-cache-radar.git"
+  },
+  "license": "MIT"
+}

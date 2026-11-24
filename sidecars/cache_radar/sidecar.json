@@ -1,0 +1,21 @@
+{
+  "command": "node",
+  "args": ["main.mjs"],
+  "restart_policy": "always",
+  "display_name": "Cache Radar",
+  "description": "Compact 3-tab widget showing prompt cache hit rates for the active session (with subagent/swarm trees), last 24 hours, and last 30 days across all local clients.",
+  "has_web_ui": true,
+  "agent_permissions": {
+    "allows_user_interactions": false
+  },
+  "ui_config": {
+    "display_name": "Cache Radar",
+    "views": [
+      {
+        "path": "/",
+        "entrypoint": "SIDECAR_UI_ENTRYPOINT_AUX_PANE",
+        "title": "Cache Radar"
+      }
+    ]
+  }
+}
