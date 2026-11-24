@@ -9,17 +9,17 @@ A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspect
 <table>
   <tr>
     <td align="center" width="33%">
-      <img src="docs/screenshots/session-light.png" alt="Active Session view (Light theme)" width="100%" />
+      <img src="docs/screenshots/en-session-light.png" alt="Active Session view (Light theme)" width="100%" />
       <br />
       <sub><strong>Active Session (Light)</strong> — multi-day timeline scrubber, hit-rate breakdown, miss causes, and per-turn trend</sub>
     </td>
     <td align="center" width="33%">
-      <img src="docs/screenshots/session-dark.png" alt="Active Session view (Dark theme)" width="100%" />
+      <img src="docs/screenshots/en-session-dark.png" alt="Active Session view (Dark theme)" width="100%" />
       <br />
       <sub><strong>Active Session (Dark)</strong> — automatically synced with the Antigravity host theme</sub>
     </td>
     <td align="center" width="33%">
-      <img src="docs/screenshots/window-24h.png" alt="Last 24 Hours view" width="100%" />
+      <img src="docs/screenshots/en-window-24h.png" alt="Last 24 Hours view" width="100%" />
       <br />
       <sub><strong>Last 24 Hours</strong> — hourly trend, main vs. subagent split, and client/model breakdown</sub>
     </td>
@@ -117,7 +117,7 @@ agy-cache-radar/
 ├── assets/logo.svg                 # 128x128 plugin icon
 ├── docs/
 │   ├── architecture.md             # Data model, DAG dedup, and discovery spec
-│   └── screenshots/                # Widget screenshots (light, dark, 24h)
+│   └── screenshots/                # Bilingual widget screenshots (EN & ZH-CN, light/dark/24h)
 ├── src/
 │   ├── constants.mjs               # Time windows, regexes, limits
 │   ├── discovery.mjs               # Multi-client / multi-CLI data directory discovery

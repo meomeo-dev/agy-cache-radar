@@ -117,7 +117,7 @@ agy-cache-radar/
 ├── assets/logo.svg                 # 128x128 插件图标
 ├── docs/
 │   ├── architecture.md             # 数据模型、去重规则与目录发现说明
-│   └── screenshots/                # 界面截图（浅色、深色、近 24 小时）
+│   └── screenshots/                # 中英双语界面截图（浅色、深色、近 24 小时）
 ├── src/
 │   ├── constants.mjs               # 时间窗口、正则与常量定义
 │   ├── discovery.mjs               # 多客户端与多 CLI 数据目录自动发现

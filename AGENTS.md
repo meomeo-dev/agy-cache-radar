@@ -38,6 +38,13 @@ Split or refactor modules before adding new behavior when crossing these limits:
 - Frontend UI `.js` or `.css` file: 300 lines; function: 30 lines.
 - Shell script (if any): 200 lines; function: 20 lines.
 
+## Internationalization (i18n)
+
+- Keep `sidecars/cache_radar/web/i18n.js` dictionaries (`zh-CN` and `en`) in 100% key and `{placeholder}` parity, covering all 8 `REASON_META` keys.
+- Switching language via `#lang-btn` must re-render client-side without issuing extra `/api/stats` requests.
+- Keep `README.md` strictly in English (only the top language link may reference `简体中文`) and `README.zh-CN.md` strictly in Simplified Chinese; keep English and Chinese screenshots separated under `docs/screenshots/`.
+- Keep `scripts/cache-stats.mjs` text output single-language per `--lang <en|zh-CN>` (never mix English and Chinese labels in one output).
+
 ## Communication & Writing Style
 
 - Use plain, direct engineering terminology across code, UI copy, comments, and documentation.

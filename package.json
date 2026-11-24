@@ -1,6 +1,6 @@
 {
   "name": "agy-cache-radar",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "private": true,
   "description": "Antigravity plugin widget displaying prompt cache hit rates for the active session, last 24 hours, and last 30 days with subagent/swarm and multi-client support.",

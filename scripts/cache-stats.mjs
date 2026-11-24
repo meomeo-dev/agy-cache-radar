@@ -254,7 +254,7 @@ export function formatTextReport(snap, lang = 'en') {
   const locale = normalizeLang(lang) || 'en';
   const copy = CLI_COPY[locale] || CLI_COPY.en;
   const lines = [
-    '=== Cache Radar v0.1.0 ===',
+    '=== Cache Radar v0.1.1 ===',
     copy.sources(snap.diagnostics),
     '',
     ...formatSessionLines(snap.activeSession, copy, locale),

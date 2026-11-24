@@ -4,6 +4,19 @@ All notable changes to `agy-cache-radar` are documented in this file.
 
 The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.1] - 2026-11-24
+
+### Added
+- **Bilingual Widget i18n (`en` / `zh-CN`) & Instant Language Switcher**:
+  - Added `sidecars/cache_radar/web/i18n.js` (`window.CacheRadar.i18n`) with 102 matched translation keys and all 8 cache-miss reason labels/tooltips in English and Simplified Chinese.
+  - Added a compact topbar language switcher button (`EN`/`ZH`) that switches locale client-side with zero extra API requests, persisting to `localStorage` (`cr_lang`) with `?lang=en|zh-CN` query override and `navigator.language` auto-detection.
+- **Bilingual CLI Reporter (`scripts/cache-stats.mjs`)**:
+  - Added `--lang <en|zh-CN>` flag (auto-detecting from `LC_ALL` / `LANG`) for consistent single-language text reports while leaving `--json` output unchanged.
+- **Dedicated Bilingual Documentation & Screenshots**:
+  - Split documentation into pure English ([README.md](README.md)) and pure Simplified Chinese ([README.zh-CN.md](README.zh-CN.md)) with matching English and Chinese 2x Retina screenshots under `docs/screenshots/`.
+- **Automated i18n Test Suite (`tests/i18n.test.mjs`)**:
+  - Added tests verifying 100% dictionary key/placeholder parity, zero CJK characters in English renders, live switcher persistence without extra fetches, and CLI `--lang` behavior (11/11 tests passing).
+
 ## [0.1.0] - 2026-11-24
 
 Initial public release of **Cache Radar** (`agy-cache-radar`).

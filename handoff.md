@@ -18,15 +18,16 @@
 
 ## 二、 当前版本核心进展 (Current Milestones)
 
-### 1. 中英双语支持（`en` / `zh-CN`）与界面语言切换
-- **目标**：让侧边栏面板和命令行统计脚本完整支持英文与简体中文，并提供即点即切换的顶部语言开关，避免中英混杂。
+### 1. v0.1.1：中英双语支持（`en` / `zh-CN`）、界面语言切换与双语文档截图
+- **目标**：让侧边栏面板、命令行统计脚本与 README 文档完整支持英文与简体中文，并提供即点即切换的顶部语言开关，避免中英混杂。
 - **主要改动**：
   - 新增 [`sidecars/cache_radar/web/i18n.js`](./sidecars/cache_radar/web/i18n.js)（经典 IIFE，挂载 `window.CacheRadar.i18n`），包含 102 个中英完全对等的界面词条及 8 类未命中原因标签/提示，按 `?lang=` → `localStorage('cr_lang')` → `navigator.language` 解析默认语言，并同步 `document.documentElement.lang` 与 `[data-i18n*]` 静态 DOM。
   - [`sidecars/cache_radar/main.mjs`](./sidecars/cache_radar/main.mjs) 注册 `/i18n.js` 静态资源；[`sidecars/cache_radar/web/index.html`](./sidecars/cache_radar/web/index.html) 在 `/preload.js` 后、`/format.js` 前加载 `/i18n.js?v=10`（全量静态资源版本号递增至 `?v=10`），并在顶部操作区新增 `#lang-btn`（`EN`/`ZH`）切换按钮。
   - [`sidecars/cache_radar/web/app.js`](./sidecars/cache_radar/web/app.js)、[`views.js`](./sidecars/cache_radar/web/views.js)、[`diag_views.js`](./sidecars/cache_radar/web/diag_views.js)、[`format.js`](./sidecars/cache_radar/web/format.js)、[`charts.js`](./sidecars/cache_radar/web/charts.js)、[`timeline.js`](./sidecars/cache_radar/web/timeline.js) 全面接入 `CR.i18n`，点击 `#lang-btn` 仅前端重绘不触发额外 `/api/stats` 请求；[`styles.css`](./sidecars/cache_radar/web/styles.css) 新增 `.lang-btn` 样式并微调窄屏列宽防英文溢出。
   - [`scripts/cache-stats.mjs`](./scripts/cache-stats.mjs) 新增 `--lang <en|zh-CN>`（默认按 `LC_ALL` / `LANG` 自动判断，未匹配 `^zh` 时回退 `en`），完整本地化文本报告并保持 `--json` 结构不变。
+  - 文档拆分为纯英文 [`README.md`](./README.md) 与纯简体中文 [`README.zh-CN.md`](./README.zh-CN.md)，并在 [`docs/screenshots/`](./docs/screenshots/) 更新配套中英文 6 张 2x Retina 合成样本截图。
   - 新增 [`tests/i18n.test.mjs`](./tests/i18n.test.mjs) 并更新 [`tests/server.test.mjs`](./tests/server.test.mjs)，覆盖词典键与占位符一致性、8 类原因全覆盖、独立服务 + `node:vm` 全页面中英渲染（英文模式 0 中文字符）、`#lang-btn`/`toggleLang()` 切换持久化与零重复请求，以及 CLI `--lang` 隔离测试。
-- **质量验证**：`node --test tests/*.test.mjs`（11/11 通过）、`agy plugin validate .`（0 错误）、已安装目录 `agy plugin validate --strict`（0 错误 0 警告）及 Chrome Headless CDP 中英双语 480×980 视觉校验通过。
+- **质量验证**：`node --test tests/*.test.mjs`（11/11 通过）、`agy plugin validate .`（0 错误）、已安装目录 `agy plugin validate --strict`（0 错误 0 警告）及 Chrome Headless CDP 中英双语 6 张截图视觉校验通过。
 
 ### 2. v0.1.0 首个公开版本整理（含多天时间轴筛选与文档截图）
 - **目标**：支持持续多天的跨天会话按时段查看与缩放筛选，补齐文档、截图、规范文件与公开仓库发布准备。
@@ -127,7 +128,7 @@ agy plugin validate --strict ~/.gemini/config/plugins/cache-radar
 
 ## 七、 会话交接前自检清单 (Pre-Handoff Checklist)
 
-- [x] 代码库 Git 工作区将在本地提交后保持干净。
+- [x] 代码库 Git 工作区将在提交并打 `v0.1.1` 标签、推送至 `origin` 后保持干净。
 - [x] 全部单元测试通过（`tests/*.test.mjs`，11/11）。
 - [x] 插件校验通过（仓库目录 `agy plugin validate .` 0 错误，已安装目录 `--strict` 0 警告）。
 - [x] 所有源文件满足 [`AGENTS.md`](./AGENTS.md) 中的行数阈值。
