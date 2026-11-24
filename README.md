@@ -1,6 +1,8 @@
 # Cache Radar (`agy-cache-radar`)
 
-A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspecting prompt cache hit rates, diagnosing cache misses, and filtering long-running multi-day sessions across all local Antigravity clients and CLI profiles.
+English | [简体中文](README.zh-CN.md)
+
+A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspecting prompt cache hit rates, diagnosing cache misses, and filtering multi-day sessions across all local Antigravity desktop profiles and CLI directories.
 
 ## Screenshots
 
@@ -9,17 +11,17 @@ A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspect
     <td align="center" width="33%">
       <img src="docs/screenshots/session-light.png" alt="Active Session view (Light theme)" width="100%" />
       <br />
-      <sub><strong>Active Session (Light)</strong> — multi-day timeline scrubber, hit-rate split, miss causes, and per-turn trend</sub>
+      <sub><strong>Active Session (Light)</strong> — multi-day timeline scrubber, hit-rate breakdown, miss causes, and per-turn trend</sub>
     </td>
     <td align="center" width="33%">
       <img src="docs/screenshots/session-dark.png" alt="Active Session view (Dark theme)" width="100%" />
       <br />
-      <sub><strong>Active Session (Dark)</strong> — auto-synced with Antigravity host theme</sub>
+      <sub><strong>Active Session (Dark)</strong> — automatically synced with the Antigravity host theme</sub>
     </td>
     <td align="center" width="33%">
       <img src="docs/screenshots/window-24h.png" alt="Last 24 Hours view" width="100%" />
       <br />
-      <sub><strong>Last 24 Hours</strong> — hourly trend, main vs subagent split, and multi-client/model breakdown</sub>
+      <sub><strong>Last 24 Hours</strong> — hourly trend, main vs. subagent split, and client/model breakdown</sub>
     </td>
   </tr>
 </table>
@@ -27,16 +29,16 @@ A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspect
 ## Features
 
 - **3-Tab Side Panel Widget**:
-  1. **当前会话 (Active Session)** — Cumulative and latest-turn hit rate, zoomable multi-day timeline scrubber, cache-miss attribution with explicit `-X.X%` hit-rate impact, per-turn trend chart, subagent/swarm tree toggle (`含子代理` / `仅主`), and drilldown views (`丢缓存` / `分布` / `模型` / `子代理`).
-  2. **近 24 小时 (Last 24 Hours)** — Rolling 24-hour event-level hit rate, hourly bar chart, role split (`全部` / `仅主` / `仅子代理`), client/profile breakdown, model breakdown, and top sessions.
-  3. **近 30 天 (Last 30 Days)** — Rolling 30-day event-level hit rate, daily trend chart, client/profile breakdown, model breakdown, and top sessions.
+  1. **Active Session** — Cumulative and latest-turn hit rate, zoomable multi-day timeline scrubber, cache-miss attribution with explicit `-X.X%` hit-rate impact, per-turn trend chart, subagent/swarm tree toggle (include subagents vs. main only), and drilldown tabs (miss events, interval/context distributions, models, and subagents).
+  2. **Last 24 Hours** — Rolling 24-hour event-level hit rate, hourly bar chart, role filter (all, main only, subagents only), client/profile breakdown, model breakdown, and top sessions.
+  3. **Last 30 Days** — Rolling 30-day event-level hit rate, daily trend chart, client/profile breakdown, model breakdown, and top sessions.
 - **DevTools-Style Zoomable Timeline Scrubber**:
-  - Plots all session turns on a time-scaled 72-bin chronological activity track so idle overnight periods remain visible as gaps and active bursts stand out by density and hit rate.
-  - Supports drag-to-brush range selection, left/right handle resizing, dragging the selected window to pan, mouse-wheel and `+`/`−`/`↺` zoom controls, double-click reset, and `全部` / `1h` / `24h` / `7d` / `30d` quick presets.
-  - Recalculates every Active Session card for the selected range while keeping pre-window turn transition history intact (so resumed turns after a break are still attributed to idle TTL expiry rather than misclassified as cold starts).
+  - Plots session turns on a time-scaled 72-bin chronological activity track so idle overnight intervals appear as gaps while active bursts stand out by density and hit rate.
+  - Supports drag-to-brush range selection, left/right handle resizing, dragging the selected window to pan, mouse-wheel and `+`/`−`/`↺` zoom controls, double-click reset, and `All` / `1h` / `24h` / `7d` / `30d` quick presets.
+  - Recalculates every Active Session metric for the selected range while preserving pre-window turn transition history, so resumed turns after an idle gap are still attributed to idle TTL expiry rather than misclassified as cold starts.
 - **Exact Subagent & Swarm Accounting**:
-  - Reads isolated child transcripts and merges parent-child links from `conversation_summaries.db`, `conversation_parents`, and `swarm/members.json`.
-  - Handles multi-level subagent trees with cycle/orphan guards, deduplicates identical forked leading prefixes, and enforces `All = Main Only + Subagents/Swarm` on rolling windows.
+  - Reads isolated child transcripts and merges parent-child edges from `conversation_summaries.db`, `conversation_parents`, and `swarm/members.json`.
+  - Handles multi-level subagent trees with cycle and orphan guards, deduplicates identical forked leading prefixes, and enforces `All = Main Only + Subagents/Swarm` on rolling windows.
 - **Multi-Client & Multi-CLI Auto-Discovery**:
   - Automatically discovers Desktop profiles (`~/.agy-profiles/*`), standard App/IDE directories (`~/.gemini/antigravity`, `~/.gemini/antigravity-ide`), and CLI directories (`~/.gemini/antigravity-cli*`), deduplicating symlinks and conversation IDs while skipping backup directories by default.
 - **Zero Runtime Dependencies & Local-Only**:
@@ -53,7 +55,7 @@ agy plugin validate .
 agy plugin install .
 ```
 
-In the Antigravity desktop app, open **Plugins > Cache Radar** or open the widget from the side panel **`+`** menu (right-click the tab to **Pin Tab**).
+In the Antigravity desktop app, open **Plugins > Cache Radar** or launch the widget from the side panel **`+`** menu (right-click the tab to **Pin Tab**).
 
 > **Note on plugin updates**: Antigravity keeps the sidecar Node process and closed side-panel iframes cached in memory. After syncing updated code into `~/.gemini/config/plugins/cache-radar`, toggle **Cache Radar** off and back on in the Plugins Manager to reload the process and assets.
 
@@ -101,6 +103,8 @@ Or configure via environment variables:
 ```text
 agy-cache-radar/
 ├── plugin.json                     # Antigravity plugin manifest
+├── README.md                       # English documentation
+├── README.zh-CN.md                 # Simplified Chinese documentation
 ├── AGENTS.md                       # Repository engineering guidelines
 ├── CHANGELOG.md                    # Release history
 ├── handoff.md                      # Project handoff notes and open tasks
