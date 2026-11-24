@@ -41,6 +41,10 @@ A zero-dependency Antigravity (`agy`) side-panel plugin and CLI tool for inspect
   - Handles multi-level subagent trees with cycle and orphan guards, deduplicates identical forked leading prefixes, and enforces `All = Main Only + Subagents/Swarm` on rolling windows.
 - **Multi-Client & Multi-CLI Auto-Discovery**:
   - Automatically discovers Desktop profiles (`~/.agy-profiles/*`), standard App/IDE directories (`~/.gemini/antigravity`, `~/.gemini/antigravity-ide`), and CLI directories (`~/.gemini/antigravity-cli*`), deduplicating symlinks and conversation IDs while skipping backup directories by default.
+- **Bilingual UI & CLI (`en` / `zh-CN`)**:
+  - Side panel widget supports English and Simplified Chinese with an instant topbar language toggle (`EN`/`ZH`) that re-renders client-side with zero extra fetches.
+  - Resolves locale by URL query parameter (`?lang=en` or `?lang=zh-CN`), `localStorage` (`cr_lang`) persistence, and automatic browser locale detection (`navigator.language`).
+  - CLI reporter (`scripts/cache-stats.mjs`) supports `--lang <en|zh-CN>` and auto-detects locale from `LC_ALL` / `LANG`.
 - **Zero Runtime Dependencies & Local-Only**:
   - Runs directly on Antigravity's bundled Node.js (`>=22.5.0`, using built-in `node:sqlite`), opens local databases read-only, tails JSONL transcripts incrementally by byte offset, and uses conditional ETag polling.
 
@@ -66,7 +70,7 @@ In the Antigravity desktop app, open **Plugins > Cache Radar** or launch the wid
 ```bash
 npm run dev
 # Serves http://127.0.0.1:4318/ against your local Antigravity data directories.
-# Optional query params: ?tab=session|24h|30d&theme=light|dark&source=all|current
+# Optional query params: ?tab=session|24h|30d&theme=light|dark&source=all|current&lang=en|zh-CN
 ```
 
 ### Terminal Reporter
@@ -76,6 +80,8 @@ npm run stats
 node scripts/cache-stats.mjs --last 24h
 node scripts/cache-stats.mjs --from 2026-11-23T00:00:00Z --to 2026-11-23T23:59:59Z
 node scripts/cache-stats.mjs --source current
+node scripts/cache-stats.mjs --lang en
+node scripts/cache-stats.mjs --lang zh-CN
 node scripts/cache-stats.mjs --json
 ```
 
@@ -128,9 +134,13 @@ agy-cache-radar/
 │   ├── sidecar.json                # AUX_PANE UI sidecar manifest
 │   ├── main.mjs                    # SidecarApp + standalone HTTP server
 │   └── web/                        # 3-tab widget assets (classic IIFE scripts)
-├── scripts/cache-stats.mjs         # Terminal / skill CLI reporter
+│       ├── i18n.js                 # en / zh-CN dictionary, locale detection, and switcher
+│       └── ...                     # index.html, styles.css, app.js, views.js, diag_views.js, timeline*.js, charts.js, format.js
+├── scripts/cache-stats.mjs         # Terminal / skill CLI reporter (--lang en|zh-CN)
 ├── skills/cache-radar/SKILL.md     # /cache-radar skill definition
 └── tests/                          # Automated tests (node --test)
+    ├── i18n.test.mjs               # Dictionary parity, VM render, switcher, and CLI i18n tests
+    └── ...                         # aggregator, diagnostics, discovery, hierarchy, server tests
 ```
 
 ## Development & Testing

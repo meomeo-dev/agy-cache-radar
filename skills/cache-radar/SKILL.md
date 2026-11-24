@@ -22,6 +22,11 @@ token savings, or wants to open the Cache Radar widget.
    [Cache Radar](sidecar://cache-radar/cache_radar/)
    ```
 
+   The side panel widget supports both English (`en`) and Simplified Chinese
+   (`zh-CN`) via the topbar `EN`/`ZH` language switcher (persisted in
+   `localStorage`, overridable via `?lang=en|zh-CN`, defaulting from browser
+   locale).
+
 2. When the user asks for a direct text summary (or when running in Antigravity
    CLI), run the bundled zero-dependency stats script from the plugin root:
 
@@ -37,6 +42,8 @@ token savings, or wants to open the Cache Radar widget.
      explicit timestamp range.
    - `--source <all|current|source_id>`: scope 24h and 30d metrics to all
      discovered data directories, the current profile, or a specific client.
+   - `--lang <en|zh-CN>`: set CLI text report language (defaults from
+     `LC_ALL` / `LANG`, falling back to `en`).
    - `--json`: emit structured JSON metrics.
 
 3. Always report:

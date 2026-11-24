@@ -68,6 +68,15 @@ html, body {
   background: var(--cr-card); color: var(--cr-fg-2); cursor: pointer;
 }
 .icon-btn:hover { background: var(--cr-hover); }
+.lang-btn {
+  height: 26px; min-width: 30px; padding: 0 7px;
+  display: inline-flex; align-items: center; justify-content: center;
+  border-radius: 6px; border: 1px solid var(--cr-border);
+  background: var(--cr-card); color: var(--cr-fg-2);
+  font-family: var(--cr-mono); font-size: 11px; font-weight: 600;
+  line-height: 1; white-space: nowrap; cursor: pointer;
+}
+.lang-btn:hover { background: var(--cr-hover); color: var(--cr-fg); }
 .icon { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 
 .tabs {
@@ -91,7 +100,7 @@ html, body {
 
 .toolbar-row { display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap; }
 .pill-group { display: inline-flex; padding: 2px; gap: 2px; border-radius: 7px; background: var(--cr-fill); border: 1px solid var(--cr-border); }
-.pill { padding: 2px 8px; border: 0; border-radius: 5px; background: transparent; color: var(--cr-fg-muted); font-size: 11px; font-weight: 500; cursor: pointer; }
+.pill { padding: 2px 8px; border: 0; border-radius: 5px; background: transparent; color: var(--cr-fg-muted); font-size: 11px; font-weight: 500; white-space: nowrap; cursor: pointer; }
 .pill.active { background: var(--cr-card); color: var(--cr-fg); }
 .link-chip { padding: 3px 8px; border-radius: 99px; border: 1px solid var(--cr-border); background: var(--cr-card); color: var(--cr-primary); font-size: 11px; font-weight: 500; cursor: pointer; }
 
@@ -130,14 +139,14 @@ html, body {
 .section-sub { font-size: 10px; font-weight: 400; color: var(--cr-fg-muted); }
 
 .loss-list { display: flex; flex-direction: column; gap: 6px; }
-.loss-row { display: grid; grid-template-columns: 112px minmax(0, 1fr) 74px 48px; align-items: center; gap: 7px; cursor: help; }
+.loss-row { display: grid; grid-template-columns: 124px minmax(0, 1fr) 74px 48px; align-items: center; gap: 7px; cursor: help; }
 .loss-name { display: flex; align-items: center; gap: 5px; font-size: 11.5px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .loss-tok { font-family: var(--cr-mono); font-size: 10.5px; color: var(--cr-fg-2); text-align: right; white-space: nowrap; }
 .loss-tok small { color: var(--cr-fg-muted); }
 .loss-drop { font-family: var(--cr-mono); font-size: 11.5px; font-weight: 700; text-align: right; }
 .struct-foot {
   margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--cr-border);
-  display: flex; justify-content: space-between; font-size: 10.5px; color: var(--cr-fg-muted); font-family: var(--cr-mono); cursor: help;
+  display: flex; justify-content: space-between; gap: 8px; font-size: 10.5px; color: var(--cr-fg-muted); font-family: var(--cr-mono); cursor: help;
 }
 
 .chart-svg { width: 100%; height: 64px; display: block; }
@@ -187,7 +196,7 @@ html, body {
 .empty-range { display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: var(--cr-fg-muted); }
 
 .subtabs { display: grid; grid-template-columns: repeat(auto-fit, minmax(56px, 1fr)); gap: 3px; padding: 2px; margin-bottom: 8px; border-radius: 7px; background: var(--cr-fill); border: 1px solid var(--cr-border); }
-.subtab { padding: 4px 2px; border: 0; border-radius: 5px; background: transparent; color: var(--cr-fg-muted); font-size: 11px; font-weight: 500; cursor: pointer; }
+.subtab { padding: 4px 2px; border: 0; border-radius: 5px; background: transparent; color: var(--cr-fg-muted); font-size: 11px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; cursor: pointer; }
 .subtab.active { background: var(--cr-card); color: var(--cr-fg); font-weight: 600; }
 .sub-label { font-size: 10px; font-weight: 600; color: var(--cr-fg-muted); margin-bottom: 4px; }
 

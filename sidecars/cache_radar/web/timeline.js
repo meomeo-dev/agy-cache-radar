@@ -1,9 +1,10 @@
 (() => {
   const CR = (window.CacheRadar = window.CacheRadar || {});
   const { esc, rateTone, toneColor } = CR.fmt;
+  const tr = (key, vars) => (CR.i18n ? CR.i18n.t(key, vars) : key);
 
   const PRESETS = [
-    { key: 'all', label: '全部', ms: 0 },
+    { key: 'all', labelKey: 'tl.all', ms: 0 },
     { key: '1h', label: '1h', ms: 3600_000 },
     { key: '24h', label: '24h', ms: 24 * 3600_000 },
     { key: '7d', label: '7d', ms: 7 * 86400_000 },
@@ -25,11 +26,11 @@
   }
 
   function fmtRangeLabel(fromMs, toMs, count, total) {
-    if (fromMs === null && toMs === null) return `全部 · ${total}轮`;
+    if (fromMs === null && toMs === null) return tr('tl.rangeAll', { total });
     const span = Math.max(0, (toMs || 0) - (fromMs || 0));
     const a = fmtAxisTime(fromMs, Math.max(span, 25 * 3600_000));
     const b = fmtAxisTime(toMs, span <= 20 * 3600_000 ? span : 25 * 3600_000);
-    return `${a}–${b} · ${count}/${total}轮`;
+    return tr('tl.rangeSlice', { from: a, to: b, count, total });
   }
 
   function computeBounds(ticks) {
@@ -133,21 +134,22 @@
     const isZoomed = viewEnd - viewStart < (maxTs - minTs) * 0.98;
     const isFiltered = tlState.from !== null || tlState.to !== null;
     const selectedCount = countInRange(ticks, tlState.from, tlState.to);
-    const presetsHtml = PRESETS.map(
-      (p) => `<button type="button" class="tl-preset${tlState.preset === p.key ? ' active' : ''}" data-tl-preset="${p.key}">${p.label}</button>`
-    ).join('');
+    const presetsHtml = PRESETS.map((p) => {
+      const lbl = p.labelKey ? tr(p.labelKey) : p.label;
+      return `<button type="button" class="tl-preset${tlState.preset === p.key ? ' active' : ''}" data-tl-preset="${p.key}">${esc(lbl)}</button>`;
+    }).join('');
     const midTs = Math.round((viewStart + viewEnd) / 2);
 
     return `<div class="card tl-card" id="tl-card" data-min-ts="${minTs}" data-max-ts="${maxTs}" data-view-start="${viewStart}" data-view-end="${viewEnd}">
       <div class="tl-head">
         <div class="tl-presets">${presetsHtml}</div>
         <div class="tl-tools">
-          <button type="button" class="tl-btn" data-tl-zoom="in" title="放大时间轴">+</button>
-          <button type="button" class="tl-btn" data-tl-zoom="out" title="缩小时间轴"${isZoomed ? '' : ' disabled'}>−</button>
-          <button type="button" class="tl-btn" data-tl-zoom="reset" title="重置范围与缩放"${isZoomed || isFiltered ? '' : ' disabled'}>↺</button>
+          <button type="button" class="tl-btn" data-tl-zoom="in" title="${esc(tr('tl.zoomIn'))}">+</button>
+          <button type="button" class="tl-btn" data-tl-zoom="out" title="${esc(tr('tl.zoomOut'))}"${isZoomed ? '' : ' disabled'}>−</button>
+          <button type="button" class="tl-btn" data-tl-zoom="reset" title="${esc(tr('tl.reset'))}"${isZoomed || isFiltered ? '' : ' disabled'}>↺</button>
         </div>
       </div>
-      <div class="tl-track" id="tl-track" title="拖拽框选时间段 · 滚轮缩放 · 双击重置">
+      <div class="tl-track" id="tl-track" title="${esc(tr('tl.trackTip'))}">
         ${renderActivitySvg(ticks, viewStart, viewEnd)}
         ${renderSelectionOverlay(tlState, viewStart, viewEnd)}
       </div>

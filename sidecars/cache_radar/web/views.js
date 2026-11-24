@@ -1,6 +1,7 @@
 (() => {
   const CR = (window.CacheRadar = window.CacheRadar || {});
   const { esc, fmtGap, fmtPct, fmtTokens, rateTone, shortModel, toneColor } = CR.fmt;
+  const { reasonLabel, t } = CR.i18n;
   const { renderBarChart } = CR.charts;
   const { renderTimelineCard } = CR.timeline;
   const { renderHeroCard, renderLossCard, renderMissEventsBody, renderTileMatrix } = CR.diag;
@@ -29,10 +30,10 @@
   }
 
   function renderDrilldownCard(activeDrill, tabs) {
-    const validKey = tabs.some((t) => t.key === activeDrill) ? activeDrill : tabs[0].key;
-    const current = tabs.find((t) => t.key === validKey) || tabs[0];
+    const validKey = tabs.some((tab) => tab.key === activeDrill) ? activeDrill : tabs[0].key;
+    const current = tabs.find((tab) => tab.key === validKey) || tabs[0];
     const nav = tabs
-      .map((t) => `<button type="button" class="subtab${t.key === validKey ? ' active' : ''}" data-drill="${esc(t.key)}">${esc(t.label)}</button>`)
+      .map((tab) => `<button type="button" class="subtab${tab.key === validKey ? ' active' : ''}" data-drill="${esc(tab.key)}">${esc(tab.label)}</button>`)
       .join('');
     return `
       <div class="card">
@@ -45,7 +46,7 @@
   function renderSessionTab(snap, uiState) {
     const s = snap.activeSession;
     if (!s || !s.found) {
-      return '<div class="empty-box">暂无活跃会话记录</div>';
+      return `<div class="empty-box">${esc(t('session.empty'))}</div>`;
     }
 
     const hasDesc = s.descendantCount > 0;
@@ -74,18 +75,18 @@
       : '';
 
     const parentChip = s.parentRoot
-      ? `<button type="button" class="link-chip" data-focus-conv="${esc(s.parentRoot.conversationId)}">主会话 ↗</button>`
+      ? `<button type="button" class="link-chip" data-focus-conv="${esc(s.parentRoot.conversationId)}">${esc(t('session.parentChip'))}</button>`
       : '';
 
     const subToggle = hasDesc
       ? `<div class="pill-group">
-          <button type="button" class="pill${useTree ? ' active' : ''}" data-sub-mode="tree">含子代理(${descBadge})</button>
-          <button type="button" class="pill${!useTree ? ' active' : ''}" data-sub-mode="self">仅主</button>
+          <button type="button" class="pill${useTree ? ' active' : ''}" data-sub-mode="tree">${esc(t('session.withSub', { count: descBadge }))}</button>
+          <button type="button" class="pill${!useTree ? ' active' : ''}" data-sub-mode="self">${esc(t('session.mainOnly'))}</button>
         </div>`
       : '';
 
     const toolbarHtml = `<div class="toolbar-row">
-      <select class="session-select" id="session-select" aria-label="切换会话">${currentOpt}${sessionOptions}</select>
+      <select class="session-select" id="session-select" aria-label="${esc(t('session.selectAria'))}">${currentOpt}${sessionOptions}</select>
       ${parentChip}${subToggle}
     </div>`;
     const timelineHtml = renderTimelineCard(ticks, uiState.tl);
@@ -93,47 +94,49 @@
     if (isRangeFiltered && metrics.turns === 0) {
       return `${toolbarHtml}${timelineHtml}
         <div class="card empty-range">
-          <span>该时间段无调用</span>
-          <button type="button" class="link-chip" data-tl-zoom="reset">重置为全部</button>
+          <span>${esc(t('session.emptyRange'))}</span>
+          <button type="button" class="link-chip" data-tl-zoom="reset">${esc(t('session.resetRange'))}</button>
         </div>`;
     }
 
     const latestPart = latest
-      ? `最新轮 <strong class="rate-${rateTone(latest.cacheHitRate)}">${esc(fmtPct(latest.cacheHitRate))}</strong>`
+      ? `${esc(t('session.latestTurn'))} <strong class="rate-${rateTone(latest.cacheHitRate)}">${esc(fmtPct(latest.cacheHitRate))}</strong>`
       : '';
     const footerHtml = hasDesc
-      ? `<span>主会话 <strong>${esc(fmtPct(s.self.cacheHitRate))}</strong> · 子代理(${activeDesc}) <strong>${esc(fmtPct(s.subagents.cacheHitRate))}</strong></span><span>${latestPart}</span>`
-      : `<span>${esc(s.sourceLabel)} · 峰值 ${esc(fmtTokens(diag.maxPromptTokens))}</span><span>${latestPart}</span>`;
+      ? `<span>${esc(t('session.main'))} <strong>${esc(fmtPct(s.self.cacheHitRate))}</strong> · ${esc(t('session.subCount', { count: activeDesc }))} <strong>${esc(fmtPct(s.subagents.cacheHitRate))}</strong></span><span>${latestPart}</span>`
+      : `<span>${esc(s.sourceLabel)} · ${esc(t('session.peak', { tokens: fmtTokens(diag.maxPromptTokens) }))}</span><span>${latestPart}</span>`;
 
     const sparkline = renderBarChart(series, {
-      ariaLabel: '逐轮命中率',
-      axisLabels: [`近 ${series.length} 轮`, '圆点 = 0% 丢缓存', '最新'],
-      tooltip: (t, i) =>
-        `#${t.stepIndex >= 0 ? t.stepIndex : i + 1}${t.agent ? ` [${t.agent}]` : ''} · ${fmtPct(t.cacheHitRate)}${t.reasonLabel && t.cacheHitRate === 0 ? ` [${t.reasonLabel}]` : ''} · ${fmtGap(t.gapSec)} · ${shortModel(t.model)}`,
+      ariaLabel: t('session.sparkAria'),
+      axisLabels: [t('session.sparkLeft', { count: series.length }), t('session.sparkMid'), t('session.sparkRight')],
+      tooltip: (pt, i) => {
+        const rTag = pt.reason && pt.cacheHitRate === 0 ? ` [${reasonLabel(pt.reason, true)}]` : '';
+        return `#${pt.stepIndex >= 0 ? pt.stepIndex : i + 1}${pt.agent ? ` [${pt.agent}]` : ''} · ${fmtPct(pt.cacheHitRate)}${rTag} · ${fmtGap(pt.gapSec)} · ${shortModel(pt.model)}`;
+      },
     });
 
     const childRows = s.descendants.slice(0, 10).map((d) => ({
       title: d.title,
       badge: d.kind === 'swarm_worker' ? 'Swarm' : 'Sub',
       badgeLive: d.isLive,
-      meta: `${d.turns}轮 · 丢${d.warmMissTurns || 0}次`,
+      meta: t('row.turnsMiss', { turns: d.turns, misses: d.warmMissTurns || 0 }),
       rate: d.cacheHitRate,
       clickConvId: d.conversationId,
     }));
 
     const modelRows = metrics.models.map((m) => ({
       title: shortModel(m.model),
-      meta: `${m.turns}轮 · 丢${m.warmMissTurns || 0}次 · ${fmtTokens(m.totalPromptTokens)}`,
+      meta: t('row.modelMeta', { turns: m.turns, misses: m.warmMissTurns || 0, tokens: fmtTokens(m.totalPromptTokens) }),
       rate: m.cacheHitRate,
     }));
 
     const drillTabs = [
-      { key: 'events', label: `丢缓存(${diag.missEvents?.length || 0})`, html: renderMissEventsBody(diag) },
-      { key: 'matrices', label: '分布', html: renderTileMatrix(diag) },
-      { key: 'models', label: '模型', html: renderProgressRows(modelRows, '无数据') },
+      { key: 'events', label: t('drill.events', { count: diag.missEvents?.length || 0 }), html: renderMissEventsBody(diag) },
+      { key: 'matrices', label: t('drill.matrices'), html: renderTileMatrix(diag) },
+      { key: 'models', label: t('drill.models'), html: renderProgressRows(modelRows, t('empty.noData')) },
     ];
     if (hasDesc) {
-      drillTabs.push({ key: 'agents', label: `子代理(${activeDesc})`, html: renderProgressRows(childRows, '该时段无活跃子代理') });
+      drillTabs.push({ key: 'agents', label: t('drill.agents', { count: activeDesc }), html: renderProgressRows(childRows, t('session.noSubInRange')) });
     }
 
     return `
@@ -142,7 +145,7 @@
       ${renderHeroCard(metrics, diag, { footerHtml })}
       ${renderLossCard(diag)}
       <div class="card">
-        <div class="section-head"><span>逐轮趋势</span><span class="section-sub">均值 +${esc(fmtTokens(diag.avgNewDeltaTokens))}/轮</span></div>
+        <div class="section-head"><span>${esc(t('session.trendTitle'))}</span><span class="section-sub">${esc(t('session.trendAvg', { tokens: fmtTokens(diag.avgNewDeltaTokens) }))}</span></div>
         ${sparkline}
       </div>
       ${renderDrilldownCard(uiState.drillSession, drillTabs)}
@@ -166,22 +169,28 @@
         : [];
 
     const chart = renderBarChart(buckets, {
-      ariaLabel: `${modeLabel}趋势`,
+      ariaLabel: t('window.chartAria', { mode: modeLabel }),
       axisLabels,
-      tooltip: (b) => `${b.label} · ${fmtPct(b.cacheHitRate)} · ${b.turns}轮(丢${b.missTurns || 0}) · ${fmtTokens(b.totalPromptTokens)}`,
+      tooltip: (b) => t('window.bucketTip', {
+        label: b.label,
+        rate: fmtPct(b.cacheHitRate),
+        turns: b.turns,
+        misses: b.missTurns || 0,
+        tokens: fmtTokens(b.totalPromptTokens),
+      }),
     });
 
     const sourceRows = (slice.sources || []).map((src) => ({
       title: src.label,
-      badge: src.isCurrent ? '当前' : src.surface.toUpperCase(),
+      badge: src.isCurrent ? t('badge.current') : src.surface.toUpperCase(),
       badgeLive: src.isCurrent,
-      meta: `${src.sessions}会话 · 丢${src.warmMissTurns || 0}次`,
+      meta: t('row.sourceMeta', { sessions: src.sessions, misses: src.warmMissTurns || 0 }),
       rate: src.cacheHitRate,
     }));
 
     const modelRows = (slice.models || []).slice(0, 6).map((m) => ({
       title: shortModel(m.model),
-      meta: `${m.turns}轮 · 丢${m.warmMissTurns || 0}次 · ${fmtTokens(m.totalPromptTokens)}`,
+      meta: t('row.modelMeta', { turns: m.turns, misses: m.warmMissTurns || 0, tokens: fmtTokens(m.totalPromptTokens) }),
       rate: m.cacheHitRate,
     }));
 
@@ -189,38 +198,38 @@
       title: s.subagentCount > 0 ? `${s.title} (+${s.subagentCount})` : s.title,
       badge: s.isLive ? 'LIVE' : '',
       badgeLive: s.isLive,
-      meta: `${s.sourceLabel} · ${s.turns}轮(丢${s.warmMissTurns || 0})`,
+      meta: t('row.sessionMeta', { source: s.sourceLabel, turns: s.turns, misses: s.warmMissTurns || 0 }),
       rate: s.cacheHitRate,
       clickConvId: s.conversationId,
     }));
 
     const modelsAndSourcesHtml =
       (sourceRows.length > 1
-        ? `<div class="sub-label">客户端</div>${renderProgressRows(sourceRows, '无数据')}<div class="sub-label" style="margin-top:8px">模型</div>`
-        : '') + renderProgressRows(modelRows, '无数据');
+        ? `<div class="sub-label">${esc(t('window.clients'))}</div>${renderProgressRows(sourceRows, t('empty.noData'))}<div class="sub-label" style="margin-top:8px">${esc(t('drill.models'))}</div>`
+        : '') + renderProgressRows(modelRows, t('empty.noData'));
 
-    const footerHtml = `<span>主会话 <strong>${esc(fmtPct(windowData.mainOnly.cacheHitRate))}</strong> · 子代理 <strong>${esc(fmtPct(windowData.subagentsOnly.cacheHitRate))}</strong></span><span>${slice.rootSessionCount}会话 / ${slice.conversationCount}代理</span>`;
+    const footerHtml = `<span>${esc(t('session.main'))} <strong>${esc(fmtPct(windowData.mainOnly.cacheHitRate))}</strong> · ${esc(t('window.subagents'))} <strong>${esc(fmtPct(windowData.subagentsOnly.cacheHitRate))}</strong></span><span>${esc(t('window.footerCounts', { sessions: slice.rootSessionCount, agents: slice.conversationCount }))}</span>`;
 
     const drillTabs = [
-      { key: 'models', label: '来源/模型', html: modelsAndSourcesHtml },
-      { key: 'matrices', label: '分布', html: renderTileMatrix(diag) },
-      { key: 'events', label: `丢缓存(${diag.missEvents?.length || 0})`, html: renderMissEventsBody(diag) },
-      { key: 'sessions', label: '会话', html: renderProgressRows(topRows, '无会话') },
+      { key: 'models', label: t('drill.sourcesModels'), html: modelsAndSourcesHtml },
+      { key: 'matrices', label: t('drill.matrices'), html: renderTileMatrix(diag) },
+      { key: 'events', label: t('drill.events', { count: diag.missEvents?.length || 0 }), html: renderMissEventsBody(diag) },
+      { key: 'sessions', label: t('drill.sessions'), html: renderProgressRows(topRows, t('window.noSessions')) },
     ];
 
     return `
       <div class="toolbar-row">
         <div class="pill-group">
-          <button type="button" class="pill${windowRole === 'all' ? ' active' : ''}" data-win-role="all">全部</button>
-          <button type="button" class="pill${windowRole === 'main' ? ' active' : ''}" data-win-role="main">仅主</button>
-          <button type="button" class="pill${windowRole === 'subagents' ? ' active' : ''}" data-win-role="subagents">仅子代理</button>
+          <button type="button" class="pill${windowRole === 'all' ? ' active' : ''}" data-win-role="all">${esc(t('tl.all'))}</button>
+          <button type="button" class="pill${windowRole === 'main' ? ' active' : ''}" data-win-role="main">${esc(t('session.mainOnly'))}</button>
+          <button type="button" class="pill${windowRole === 'subagents' ? ' active' : ''}" data-win-role="subagents">${esc(t('window.roleSub'))}</button>
         </div>
-        <span class="section-sub">均 ${diag.avgTurnsPerAgent || 0}轮/对话</span>
+        <span class="section-sub">${esc(t('window.avgTurns', { avg: diag.avgTurnsPerAgent || 0 }))}</span>
       </div>
       ${renderHeroCard(slice, diag, { footerHtml })}
       ${renderLossCard(diag)}
       <div class="card">
-        <div class="section-head"><span>${isHourly ? '24h 趋势' : '30d 趋势'}</span><span class="section-sub">悬浮看明细</span></div>
+        <div class="section-head"><span>${esc(isHourly ? t('window.trend24h') : t('window.trend30d'))}</span><span class="section-sub">${esc(t('window.hoverHint'))}</span></div>
         ${chart}
       </div>
       ${renderDrilldownCard(drillKey, drillTabs)}

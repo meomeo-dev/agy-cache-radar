@@ -6,7 +6,8 @@
   <meta http-equiv="Content-Security-Policy" content="frame-src 'none'; child-src 'none'">
   <title>Cache Radar</title>
   <script src="/preload.js"></script>
-  <link rel="stylesheet" href="/styles.css?v=9">
+  <script src="/i18n.js?v=10"></script>
+  <link rel="stylesheet" href="/styles.css?v=10">
 </head>
 <body>
   <div class="widget" id="widget">
@@ -16,10 +17,11 @@
         <h1 class="brand-title">Cache Radar</h1>
       </div>
       <div class="topbar-actions">
-        <select id="source-select" class="select-compact" aria-label="数据源范围" title="切换客户端 / Profile 数据源">
-          <option value="all">全部客户端</option>
+        <select id="source-select" class="select-compact" aria-label="数据源范围" title="切换客户端 / Profile 数据源" data-i18n-aria="source.aria" data-i18n-title="source.title">
+          <option value="all" data-i18n="source.allDefault">全部客户端</option>
         </select>
-        <button id="refresh-btn" type="button" class="icon-btn" title="立即刷新" aria-label="刷新数据">
+        <button id="lang-btn" type="button" class="lang-btn" title="切换为英文" aria-label="切换界面语言" data-i18n="lang.btn" data-i18n-title="lang.title" data-i18n-aria="lang.aria">EN</button>
+        <button id="refresh-btn" type="button" class="icon-btn" title="立即刷新" aria-label="刷新数据" data-i18n-title="refresh.title" data-i18n-aria="refresh.aria">
           <svg class="icon" viewBox="0 0 16 16" aria-hidden="true">
             <path d="M13.5 8a5.5 5.5 0 1 1-1.4-3.65"/>
             <path d="M13.5 2.75v2.6h-2.6"/>
@@ -28,23 +30,23 @@
       </div>
     </header>
 
-    <nav class="tabs" role="tablist" aria-label="缓存命中率视图">
+    <nav class="tabs" role="tablist" aria-label="缓存命中率视图" data-i18n-aria="tabs.aria">
       <button type="button" role="tab" class="tab active" data-tab="session" aria-selected="true">
-        <span class="tab-label">当前会话</span>
+        <span class="tab-label" data-i18n="tab.session">当前会话</span>
         <span class="tab-rate" id="tab-rate-session">--</span>
       </button>
       <button type="button" role="tab" class="tab" data-tab="24h" aria-selected="false">
-        <span class="tab-label">近 24 小时</span>
+        <span class="tab-label" data-i18n="tab.24h">近 24 小时</span>
         <span class="tab-rate" id="tab-rate-24h">--</span>
       </button>
       <button type="button" role="tab" class="tab" data-tab="30d" aria-selected="false">
-        <span class="tab-label">近 30 天</span>
+        <span class="tab-label" data-i18n="tab.30d">近 30 天</span>
         <span class="tab-rate" id="tab-rate-30d">--</span>
       </button>
     </nav>
 
     <main class="content" id="content">
-      <div class="loading-box" id="loading-box">正在加载缓存命中率数据…</div>
+      <div class="loading-box" id="loading-box" data-i18n="loading.initial">正在加载缓存命中率数据…</div>
 
       <section id="panel-session" class="panel active" role="tabpanel"></section>
       <section id="panel-24h" class="panel" role="tabpanel"></section>
@@ -52,17 +54,17 @@
     </main>
 
     <footer class="footer" id="footer">
-      <span id="footer-meta">初始化中…</span>
+      <span id="footer-meta" data-i18n="footer.init">初始化中…</span>
       <span id="footer-updated">--</span>
     </footer>
   </div>
 
-  <script src="/format.js?v=9"></script>
-  <script src="/charts.js?v=9"></script>
-  <script src="/timeline.js?v=9"></script>
-  <script src="/timeline_drag.js?v=9"></script>
-  <script src="/diag_views.js?v=9"></script>
-  <script src="/views.js?v=9"></script>
-  <script src="/app.js?v=9"></script>
+  <script src="/format.js?v=10"></script>
+  <script src="/charts.js?v=10"></script>
+  <script src="/timeline.js?v=10"></script>
+  <script src="/timeline_drag.js?v=10"></script>
+  <script src="/diag_views.js?v=10"></script>
+  <script src="/views.js?v=10"></script>
+  <script src="/app.js?v=10"></script>
 </body>
 </html>

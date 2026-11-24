@@ -10,6 +10,7 @@ const WEB_DIR = join(__dirname, 'web');
 
 const STATIC_ASSETS = {
   '/styles.css': ['styles.css', 'text/css'],
+  '/i18n.js': ['i18n.js', 'application/javascript'],
   '/format.js': ['format.js', 'application/javascript'],
   '/charts.js': ['charts.js', 'application/javascript'],
   '/timeline.js': ['timeline.js', 'application/javascript'],

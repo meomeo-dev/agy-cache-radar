@@ -35,6 +35,7 @@ test('standalone sidecar HTTP server serves widget assets, stats, sources, and E
     for (const path of [
       '/',
       '/styles.css',
+      '/i18n.js',
       '/format.js',
       '/charts.js',
       '/timeline.js',

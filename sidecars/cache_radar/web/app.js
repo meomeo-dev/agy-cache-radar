@@ -1,6 +1,7 @@
 (() => {
   const CR = (window.CacheRadar = window.CacheRadar || {});
   const { esc, fmtPct, fmtRelTime, rateTone, syncHostTheme } = CR.fmt;
+  const { applyStaticTranslations, t, toggleLang } = CR.i18n;
   const { renderSessionTab, renderWindowTab } = CR.views;
   const { applyPreset, bindTimelineInteractions, resetTimelineState, zoomTimeline } = CR.timeline;
 
@@ -21,6 +22,7 @@
     tl: { preset: 'all', from: null, to: null, viewStart: null, viewEnd: null, isDragging: false },
     etag: '',
     snapshot: null,
+    lastError: '',
     timer: null,
   };
 
@@ -68,8 +70,8 @@
     const select = $('source-select');
     const nonEmpty = sources.filter((s) => s.transcriptCount > 0);
     const hasCurrent = sources.some((s) => s.isCurrent);
-    const options = [`<option value="all">全部客户端 (${nonEmpty.length})</option>`];
-    if (hasCurrent) options.push('<option value="current">仅当前客户端</option>');
+    const options = [`<option value="all">${esc(t('source.all', { count: nonEmpty.length }))}</option>`];
+    if (hasCurrent) options.push(`<option value="current">${esc(t('source.currentOnly'))}</option>`);
     for (const src of nonEmpty) {
       const tag = src.isCurrent ? ' ★' : '';
       options.push(`<option value="${esc(src.id)}">${esc(src.label + tag)} (${src.transcriptCount})</option>`);
@@ -118,21 +120,27 @@
     const snap = state.snapshot;
     if (!snap) return;
 
+    state.lastError = '';
     $('loading-box').style.display = 'none';
     syncSourceSelector(snap.sources || []);
     updateTabChrome(snap);
 
     $('panel-session').innerHTML = renderSessionTab(snap, state);
-    $('panel-24h').innerHTML = renderWindowTab(snap.last24h, '近 24 小时', true, state, state.drill24h);
-    $('panel-30d').innerHTML = renderWindowTab(snap.last30d, '近 30 天', false, state, state.drill30d);
+    $('panel-24h').innerHTML = renderWindowTab(snap.last24h, t('tab.24h'), true, state, state.drill24h);
+    $('panel-30d').innerHTML = renderWindowTab(snap.last30d, t('tab.30d'), false, state, state.drill30d);
 
     const d = snap.diagnostics || {};
     const dedupInfo =
       d.dedupedConversations || d.dedupedForkSteps
-        ? ` · 去重 ${d.dedupedConversations}会话/${d.dedupedForkSteps}步`
+        ? t('footer.dedup', { convs: d.dedupedConversations, steps: d.dedupedForkSteps })
         : '';
-    $('footer-meta').textContent = `${d.nonEmptySources ?? 0}/${d.totalSources ?? 0} 数据源 · ${d.totalConversations ?? 0} 对话${dedupInfo}`;
-    $('footer-updated').textContent = `更新 ${fmtRelTime(snap.generatedAt)}`;
+    $('footer-meta').textContent = t('footer.meta', {
+      nonEmpty: d.nonEmptySources ?? 0,
+      total: d.totalSources ?? 0,
+      convs: d.totalConversations ?? 0,
+      dedup: dedupInfo,
+    });
+    $('footer-updated').textContent = t('footer.updated', { time: fmtRelTime(snap.generatedAt) });
   }
 
   async function poll(force = false) {
@@ -158,7 +166,7 @@
       if (data.unchanged) {
         if (state.snapshot) {
           state.snapshot.generatedAt = data.generatedAt || Date.now();
-          $('footer-updated').textContent = `更新 ${fmtRelTime(state.snapshot.generatedAt)}`;
+          $('footer-updated').textContent = t('footer.updated', { time: fmtRelTime(state.snapshot.generatedAt) });
         }
         return;
       }
@@ -166,7 +174,8 @@
       state.snapshot = data;
       if (!state.tl.isDragging) render();
     } catch (err) {
-      $('loading-box').textContent = `加载失败：${err?.message || String(err)}`;
+      state.lastError = err?.message || String(err);
+      $('loading-box').textContent = t('error.load', { msg: state.lastError });
       $('loading-box').style.display = 'block';
     }
   }
@@ -184,6 +193,13 @@
       resetTimelineState(state.tl);
       state.etag = '';
       poll(true);
+    });
+
+    $('lang-btn')?.addEventListener('click', () => {
+      toggleLang();
+      applyStaticTranslations();
+      if (state.snapshot) render();
+      else if (state.lastError) $('loading-box').textContent = t('error.load', { msg: state.lastError });
     });
 
     $('refresh-btn').addEventListener('click', () => {
@@ -265,6 +281,7 @@
     );
   }
 
+  applyStaticTranslations();
   syncHostTheme();
   new MutationObserver(syncHostTheme).observe(document.documentElement, {
     attributes: true,

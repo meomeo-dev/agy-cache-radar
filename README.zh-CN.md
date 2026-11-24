@@ -41,6 +41,10 @@
   - 支持多级嵌套子树、环路与孤儿节点保护、fork 继承前缀步骤去重，并在 24 小时与 30 天窗口中保证「全部 = 仅主 + 仅子代理」。
 - **多客户端与多 CLI 目录自动发现**：
   - 自动发现桌面端多 Profile（`~/.agy-profiles/*`）、默认桌面端与 IDE 目录（`~/.gemini/antigravity`、`~/.gemini/antigravity-ide`）以及多个 CLI 目录（`~/.gemini/antigravity-cli*`），对符号链接和跨目录重复对话做去重，并默认跳过备份目录。
+- **中英双语界面与命令行（`en` / `zh-CN`）**：
+  - 侧边栏面板完整支持简体中文与英文，顶部操作区提供 `EN`/`ZH` 一键语言切换按钮，纯前端即时重绘且不触发额外请求。
+  - 语言解析按 URL 查询参数（`?lang=zh-CN` 或 `?lang=en`）、`localStorage`（`cr_lang`）持久化与浏览器语言（`navigator.language`）自动检测的优先级生效。
+  - 终端脚本（`scripts/cache-stats.mjs`）支持 `--lang <en|zh-CN>` 参数，默认根据 `LC_ALL` / `LANG` 自动匹配语言。
 - **零外部依赖、纯本地只读**：
   - 直接运行在 Antigravity 内置 Node.js（`>=22.5.0`，使用内置 `node:sqlite`）上，只读访问本地数据库，按字节偏移量增量读取 JSONL 日志，前端通过 ETag 条件轮询减少无效重绘。
 
@@ -66,7 +70,7 @@ agy plugin install .
 ```bash
 npm run dev
 # 启动 http://127.0.0.1:4318/ 读取本机 Antigravity 数据目录
-# 可选查询参数：?tab=session|24h|30d&theme=light|dark&source=all|current
+# 可选查询参数：?tab=session|24h|30d&theme=light|dark&source=all|current&lang=en|zh-CN
 ```
 
 ### 终端统计脚本
@@ -76,6 +80,8 @@ npm run stats
 node scripts/cache-stats.mjs --last 24h
 node scripts/cache-stats.mjs --from 2026-11-23T00:00:00Z --to 2026-11-23T23:59:59Z
 node scripts/cache-stats.mjs --source current
+node scripts/cache-stats.mjs --lang zh-CN
+node scripts/cache-stats.mjs --lang en
 node scripts/cache-stats.mjs --json
 ```
 
@@ -128,9 +134,13 @@ agy-cache-radar/
 │   ├── sidecar.json                # AUX_PANE 侧边栏 sidecar 清单
 │   ├── main.mjs                    # SidecarApp 入口与独立 HTTP 预览服务
 │   └── web/                        # 三标签页前端资源（经典 IIFE 脚本）
-├── scripts/cache-stats.mjs         # 终端与 Skill 统计脚本
+│       ├── i18n.js                 # 中英双语词典、语言解析与切换逻辑
+│       └── ...                     # index.html、styles.css、app.js、views.js、diag_views.js、timeline*.js、charts.js、format.js
+├── scripts/cache-stats.mjs         # 终端与 Skill 统计脚本（支持 --lang en|zh-CN）
 ├── skills/cache-radar/SKILL.md     # /cache-radar Skill 定义
 └── tests/                          # 自动化测试（node --test）
+    ├── i18n.test.mjs               # 双语词典校验、VM 渲染、语言切换与 CLI 测试
+    └── ...                         # aggregator、diagnostics、discovery、hierarchy、server 测试
 ```
 
 ## 开发与测试

@@ -1,10 +1,12 @@
 (() => {
   const CR = (window.CacheRadar = window.CacheRadar || {});
 
+  const tr = (key, vars) => (CR.i18n ? CR.i18n.t(key, vars) : key);
+
   function showFatalError(msg) {
     const box = document.getElementById('loading-box');
     if (box) {
-      box.textContent = `界面脚本错误：${msg}`;
+      box.textContent = CR.i18n ? tr('error.script', { msg }) : `UI script error: ${msg}`;
       box.style.display = 'block';
     }
   }
@@ -48,11 +50,11 @@
   function fmtRelTime(ts) {
     if (!ts) return '--';
     const diffSec = Math.max(0, Math.floor((Date.now() - ts) / 1000));
-    if (diffSec < 10) return '刚刚';
-    if (diffSec < 60) return `${diffSec}s 前`;
-    if (diffSec < 3600) return `${Math.floor(diffSec / 60)}m 前`;
-    if (diffSec < 86400) return `${Math.floor(diffSec / 3600)}h 前`;
-    return `${Math.floor(diffSec / 86400)}d 前`;
+    if (diffSec < 10) return tr('time.justNow');
+    if (diffSec < 60) return tr('time.secAgo', { n: diffSec });
+    if (diffSec < 3600) return tr('time.minAgo', { n: Math.floor(diffSec / 60) });
+    if (diffSec < 86400) return tr('time.hourAgo', { n: Math.floor(diffSec / 3600) });
+    return tr('time.dayAgo', { n: Math.floor(diffSec / 86400) });
   }
 
   function rateTone(rate) {
